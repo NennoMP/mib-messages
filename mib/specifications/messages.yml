@@ -1,0 +1,99 @@
+openapi: "3.0.1"
+info:
+  title: Messages Service API
+  description: Messages Microservice of Message in a Bottle Application
+  version: "0.1"
+
+servers:
+  - url: /
+
+paths:
+  /message:
+    post:
+      summary: Add a new message
+      tags:
+        - Messages
+      operationId: mib.resources.messages.create_message
+      requestBody:
+        description: Create a new message inside microservice app
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '' #TODO: define the json scheme
+      responses:
+        201:
+          description: Message created
+        default:
+          description: Error during creation of the message
+  
+  /message/{message_id}:
+    get:
+      summary: Get a message by its id
+      tags:
+        [ Messages ]
+      operationId: mib.resources.messages.update_message
+      parameters:
+        - name: message_id
+          description: Message Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Message retrieved
+        404:
+          description: Message not found
+        default:
+          description: Error during retrieval of the message
+
+    put:
+      summary: Update a message
+      tags:
+        [ Messages ]
+      operationId: mib.resources.messages.update_message
+      parameters:
+        - name: message_id
+          description: Message Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update a message inside microservice app
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '' #TODO: define the json scheme
+      responses:
+        200:
+          description: Message updated
+        404:
+          description: Message not found
+        default:
+          description: Error during updating of the message
+
+    delete:
+      summary: Delete a message
+      tags:
+        - Messages
+      operationId: mib.resources.messages.delete_message
+      parameters:
+        - name: message_id
+          description: Message Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Message deleted
+        404:
+          description: Message not found
+        default:
+          description: Error during deletion of the message
