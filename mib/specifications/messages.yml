@@ -8,31 +8,12 @@ servers:
   - url: /
 
 paths:
-  /message:
-    post:
-      summary: Add a new message
-      tags:
-        - Messages
-      operationId: mib.resources.messages.create_message
-      requestBody:
-        description: Create a new message inside microservice app
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '' #TODO: define the json scheme
-      responses:
-        201:
-          description: Message created
-        default:
-          description: Error during creation of the message
-  
   /message/{message_id}:
     get:
       summary: Get a message by its id
       tags:
         [ Messages ]
-      operationId: mib.resources.messages.update_message
+      operationId: mib.resources.messages.get_message_by_id
       parameters:
         - name: message_id
           description: Message Unique ID
@@ -48,7 +29,6 @@ paths:
           description: Message not found
         default:
           description: Error during retrieval of the message
-
     put:
       summary: Update a message
       tags:
@@ -62,13 +42,13 @@ paths:
           schema:
             type: integer
             format: int64
-      requestBody:
-        description: Update a message inside microservice app
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '' #TODO: define the json scheme
+      # requestBody:
+      #   description: Update a message inside microservice app
+      #   required: true
+      #   content:
+      #    application/json:
+      #      schema:
+      #        $ref: '' #TODO: define the json scheme
       responses:
         200:
           description: Message updated
@@ -97,3 +77,22 @@ paths:
           description: Message not found
         default:
           description: Error during deletion of the message
+  /message:
+    post:
+      summary: Add a new message
+      tags:
+        - Messages
+      operationId: mib.resources.messages.create_message
+      # requestBody:
+      #   description: Create a new message inside microservice app
+        # required: true
+        # content:
+        #     application/json:
+        #     schema:
+        #       $ref: '' #TODO: define the json scheme
+      responses:
+        201:
+          description: Message created
+        default:
+          description: Error during creation of the message
+
