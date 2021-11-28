@@ -11,7 +11,7 @@ class Message(db.Model):
     __tablename__ = 'Messages'
 
     # A list of fields to be serialized
-    SERIALIZE_LIST = ['id', 'sender_id', 'recipient_id', 'text', 'delivery_date']
+    SERIALIZE_LIST = ['id', 'sender_id', 'recipient_id', 'text', 'delivery_date', 'is_draft']
 
     # Data
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -24,8 +24,6 @@ class Message(db.Model):
     is_draft = db.Column(db.Boolean, default=True)
     is_delivered = db.Column(db.Boolean, default=False)
     is_read = db.Column(db.Boolean, default=False)
-    # Files (path)
-    attachment = db.Column(db.String, default=None)    # Attachments
 
     # Relationships to 'User' table
     #sender = relationship('User', foreign_keys='Message.sender_id')
@@ -48,9 +46,6 @@ class Message(db.Model):
 
     def get_delivery_date(self):
         return self.delivery_date
-
-    def get_attachement(self):
-        return self.attachment
 
     def serialize(self):
         return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])
