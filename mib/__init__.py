@@ -74,7 +74,35 @@ def create_app():
     # checking the environment
     if flask_env == 'testing' or flask_env == 'development':
         # we need to populate the db
+        db.drop_all()  # TODO: for debug
         db.create_all()
+
+        # TEST -----------------------------------
+        from mib.models import Message
+        from datetime import datetime
+        example = Message()
+        example.sender_id = 1
+        example.recipient_id = 2
+        example.text = 'hello by 1'
+        now = datetime.now()
+        example.delivery_date = now
+        example.last_update_date = now
+        example.is_draft = False
+        example.is_delivered = True
+        db.session.add(example)
+        example = Message()
+        example.sender_id = 2
+        example.recipient_id = 1
+        example.text = 'hello by 2'
+        now = datetime.now()
+        example.delivery_date = now
+        example.last_update_date = now
+        example.is_draft = False
+        example.is_delivered = True
+        db.session.add(example)
+        db.session.commit()
+        # -----------------------------------
+
 
     # registering to api app all specifications
     register_specifications(api_app)

@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from mib import db
+from access import Access
+
 
 class Message(db.Model):
     """Representation of Message model."""
@@ -17,7 +19,7 @@ class Message(db.Model):
     recipient_id = db.Column(db.Integer)
     text = db.Column(db.Unicode(128),nullable=False)
     delivery_date = db.Column(db.DateTime)
-    #access = db.Column(db.Integer, default=Access.ALL.value)    # Access rights.
+    access = db.Column(db.Integer, default=Access.ALL.value)    # Access rights.
     # Booleans
     is_draft = db.Column(db.Boolean, default=True)
     is_delivered = db.Column(db.Boolean, default=False)
@@ -51,4 +53,4 @@ class Message(db.Model):
         return self.attachment
 
     def serialize(self):
-        return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])    
+        return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])

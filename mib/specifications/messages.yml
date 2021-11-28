@@ -8,13 +8,20 @@ servers:
   - url: /
 
 paths:
-  /message/{message_id}:
+  /message/{user_id}/{message_id}:
     get:
       summary: Get a message by its id
       tags:
         [ Messages ]
       operationId: mib.resources.messages.get_message_by_id
       parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: message_id
           description: Message Unique ID
           in: path
@@ -29,12 +36,20 @@ paths:
           description: Message not found
         default:
           description: Error during retrieval of the message
+
     put:
       summary: Update a message
       tags:
         [ Messages ]
       operationId: mib.resources.messages.update_message
       parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: message_id
           description: Message Unique ID
           in: path
@@ -63,6 +78,13 @@ paths:
         - Messages
       operationId: mib.resources.messages.delete_message
       parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
         - name: message_id
           description: Message Unique ID
           in: path
@@ -77,6 +99,7 @@ paths:
           description: Message not found
         default:
           description: Error during deletion of the message
+  
   /message:
     post:
       summary: Add a new message
@@ -96,3 +119,24 @@ paths:
         default:
           description: Error during creation of the message
 
+  /message/{user_id}/messages:
+    get:
+      summary: Return sent, received and draft messages of a user by their id
+      tags:
+        [ Messages ]
+      operationId: mib.resources.messages.get_messages
+      parameters:
+        - name: user_id
+          description: User Unique ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Messages retrieved
+        404:
+          description: User not found
+        default:
+          description: Error during retrieval of the messages
