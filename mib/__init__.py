@@ -84,7 +84,7 @@ def create_app():
         example.sender_id = 1
         example.recipient_id = 2
         example.text = 'hello by 1'
-        now = datetime.now()
+        now = datetime.now().replace(microsecond=0)
         example.delivery_date = now
         example.last_update_date = now
         example.is_draft = False
@@ -94,7 +94,7 @@ def create_app():
         example.sender_id = 2
         example.recipient_id = 1
         example.text = 'hello by 2'
-        now = datetime.now()
+        now = datetime.now().replace(microsecond=0)
         example.delivery_date = now
         example.last_update_date = now
         example.is_draft = False

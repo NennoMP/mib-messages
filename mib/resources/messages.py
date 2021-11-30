@@ -1,3 +1,4 @@
+from datetime import datetime
 from better_profanity import profanity
 from flask import request, jsonify
 
@@ -24,6 +25,7 @@ def filter_language(message):
 def create_message():
     ''''Allows to create a new message.'''
     json_message = request.get_json()['message']
+    json_message['delivery_date'] = datetime.strptime(json_message['delivery_date'],'%Y-%m-%d %H:%M:%S')
     message = Message(**json_message)
     MessageManager.create(message=message)
     return 'Message created', 201
@@ -73,8 +75,10 @@ def update_message(user_id=None, message_id=None):
     json_message = request.get_json()['message']
 
     message.text = json_message['text']
+    message.is_draft = json_message['is_draft']
+    message.recipient_id = json_message['recipient_id']
     if 'delivery_date' in json_message:
-        message.delivery_date = json_message['delivery_date']
+        message.delivery_date = datetime.strptime(json_message['delivery_date'],'%Y-%m-%d %H:%M:%S')
     MessageManager.update()
     return 'Message updated', 200
 
