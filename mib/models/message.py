@@ -11,7 +11,7 @@ class Message(db.Model):
     __tablename__ = 'Messages'
 
     # A list of fields to be serialized
-    SERIALIZE_LIST = ['id', 'sender_id', 'recipient_id', 'text', 'delivery_date', 'is_draft']
+    SERIALIZE_LIST = ['id', 'sender_id', 'recipient_id', 'text', 'delivery_date', 'is_draft', 'is_delivered', 'is_read']
 
     # Data
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -19,15 +19,11 @@ class Message(db.Model):
     recipient_id = db.Column(db.Integer)
     text = db.Column(db.Unicode(128),nullable=False)
     delivery_date = db.Column(db.DateTime)
-    access = db.Column(db.Integer, default=Access.ALL.value)    # Access rights.
+    access = db.Column(db.Integer, default=Access.ALL.value)  # Access rights.
     # Booleans
     is_draft = db.Column(db.Boolean, default=True)
     is_delivered = db.Column(db.Boolean, default=False)
     is_read = db.Column(db.Boolean, default=False)
-
-    # Relationships to 'User' table
-    #sender = relationship('User', foreign_keys='Message.sender_id')
-    #recipient = relationship('User', foreign_keys='Message.recipient_id')
 
     def __init__(self, *args, **kw):
         super(Message, self).__init__(*args, **kw)

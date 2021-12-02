@@ -12,14 +12,6 @@ class MessageManager(object):
             if arg is None:
                 raise ValueError(f'You can\'t set {name} argument to None')
 
-    # @staticmethod
-    # def create(**kwargs):
-    #     MessageManager.check_none(**kwargs)
-
-    #     for bean in kwargs.values():
-    #         db.session.add(bean)
-    #     db.session.commit()
-
 
     @staticmethod
     def retrieve_by_id(message_id):
@@ -62,18 +54,3 @@ class MessageManager(object):
     @staticmethod
     def update():
         db.session.commit()
-
-
-    # @staticmethod
-    # def update(**kwargs):
-    #     MessageManager.check_none(**kwargs)
-    #     db.session.commit()
-
-
-    # @staticmethod
-    # def delete(**kwargs):
-    #     Manager.check_none(**kwargs)
-
-    #     for bean in kwargs.values():
-    #         db.session.delete(bean)
-    #     db.session.commit()
