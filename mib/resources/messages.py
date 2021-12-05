@@ -45,13 +45,13 @@ def get_message_by_id(user_id=None, message_id=None):
         MessageManager.update()
 
     message_aux = copy(message)
-    try:
-        current_user = UserManager.get_profile_by_id(message.recipient_id)
-    except RuntimeError:
-        message_aux.text = ''
-
-    if current_user['has_language_filter']:
-        filter_language(message_aux)
+    if user_id == message.recipient_id:
+        try:
+            current_user = UserManager.get_profile_by_id(user_id)
+        except RuntimeError:
+            message_aux.text = ''
+        if current_user['has_language_filter']:
+            filter_language(message_aux)
 
     return jsonify(message_aux.serialize()), 200
 
@@ -75,7 +75,7 @@ def update_message(user_id=None, message_id=None):
     message.is_draft = json_message['is_draft']
     message.recipient_id = json_message['recipient_id']
     if 'delivery_date' in json_message:
-        message.delivery_date = datetime.strptime(json_message['delivery_date'],'%Y-%m-%d %H:%M:%S')
+        message.delivery_date = datetime.strptime(json_message['delivery_date'], '%Y-%m-%d %H:%M:%S')
     MessageManager.update()
     return 'Message updated', 200
 

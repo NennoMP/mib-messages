@@ -92,7 +92,7 @@ def create_app():
         example = Message()
         example.sender_id = 2
         example.recipient_id = 1
-        example.text = 'hello asshole 2'
+        example.text = 'hello by 2'
         now = datetime.now().replace(microsecond=0)
         example.delivery_date = now
         example.is_draft = False

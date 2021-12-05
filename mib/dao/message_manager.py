@@ -25,23 +25,26 @@ class MessageManager(object):
     def retrieve_by_type(user_id, type):
         condition = {
             'sent': (
+                Message.sender_id == user_id,
                 Message.access.op('&')(Access.SENDER.value),
                 ~Message.is_draft,
                 Message.is_delivered
             ),
         
             'received': (
+                Message.recipient_id == user_id,
                 Message.access.op('&')(Access.RECIPIENT.value),
                 Message.is_delivered
             ),
 
             'draft': (
+                Message.sender_id == user_id,
                 Message.access.op('&')(Access.SENDER.value),
                 Message.is_draft
             )
         }
 
-        return db.session.query(Message).filter(Message.sender_id == user_id, *condition[type]).all()
+        return db.session.query(Message).filter(*condition[type]).all()
 
 
     @staticmethod
