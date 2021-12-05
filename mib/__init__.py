@@ -86,17 +86,15 @@ def create_app():
         example.text = 'hello by 1'
         now = datetime.now().replace(microsecond=0)
         example.delivery_date = now
-        example.last_update_date = now
         example.is_draft = False
         example.is_delivered = True
         db.session.add(example)
         example = Message()
         example.sender_id = 2
         example.recipient_id = 1
-        example.text = 'hello by 2'
+        example.text = 'hello asshole 2'
         now = datetime.now().replace(microsecond=0)
         example.delivery_date = now
-        example.last_update_date = now
         example.is_draft = False
         example.is_delivered = True
         db.session.add(example)

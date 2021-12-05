@@ -1,25 +1,17 @@
+from copy import copy
 from datetime import datetime
 from better_profanity import profanity
 from flask import request, jsonify
 
 from mib.dao.message_manager import MessageManager
+from mib.rao.user_manager import UserManager
 from mib.models import Message
 from access import Access
-
-from werkzeug.security import check_password_hash
 
 
 def filter_language(message):
     '''Utility function for censoring bad language in received messages.'''
-    return {
-        'text': profanity.censor(message.text),  # Censorship.
-        'delivery_date': message.delivery_date,
-        'recipient_id': message.recipient_id,
-        'sender': message.sender,
-        'recipient': message.recipient,
-        'is_draft': message.is_draft,
-        'is_delivered': message.is_delivered
-    }
+    message.text = profanity.censor(message.text)  # Censorship.
 
 
 def create_message():
@@ -37,7 +29,7 @@ def get_message_by_id(user_id=None, message_id=None):
        GET: display the content of a specific message by id (censored if language_filter is ON)
     '''
     if user_id is None or message_id is None:
-        return 'TODO', 404
+        return 'Missing user_id or message_id', 400
 
     try:
         message = MessageManager.retrieve_by_id(message_id)
@@ -48,13 +40,18 @@ def get_message_by_id(user_id=None, message_id=None):
         return 'Message not found', 404
 
     if message.get_recipient() == user_id and not message.is_draft and not message.is_read and message.is_delivered:
-        #notify.delay(message.get_sender(), 'Your message has been read!')
+        #notify.delay(message.get_sender(), 'Your message has been read!')  # TODO
         message.is_read = True
         MessageManager.update()
 
-    message_aux = message
-    #if current_user.has_language_filter:  # TODO: call user microservice
-    #    message_aux = filter_language(message)
+    message_aux = copy(message)
+    try:
+        current_user = UserManager.get_profile_by_id(message.recipient_id)
+    except RuntimeError:
+        message_aux.text = ''
+
+    if current_user['has_language_filter']:
+        filter_language(message_aux)
 
     return jsonify(message_aux.serialize()), 200
 
@@ -62,7 +59,7 @@ def get_message_by_id(user_id=None, message_id=None):
 def update_message(user_id=None, message_id=None):
     ''''Allows to update a message.'''
     if user_id is None or message_id is None:
-        return 'TODO', 404
+        return 'Missing user_id or message_id', 400
 
     try:
         message = MessageManager.retrieve_by_id(message_id)
