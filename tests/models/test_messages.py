@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 #from unittest.case import FunctionTestCase
 
 from faker import Faker
@@ -27,17 +28,17 @@ class TestMessage(ModelTest):
 
     
     def generate_random_message():
+        from mib.models import Message
+
         sender_id = TestMessage.faker.random_number()
         recipient_id = TestMessage.faker.random_number()
         text = TestMessage.faker.text()
-        delivery_date = TestMessage.faker.date_time()
+        dt = datetime.now().replace(microsecond=0)
+        delivery_date = datetime.now().replace(microsecond=0) # datetime.strftime(dt, '%Y-%m-%d %H:%M:%S')  #TestMessage.faker.date_time()
         # Booleans
         is_draft = True
         is_delivered = False
         is_read = False
-
-
-        from mib.models import Message
 
         message = Message(
             sender_id = sender_id,
@@ -50,5 +51,3 @@ class TestMessage(ModelTest):
         )
 
         return message
-    
-

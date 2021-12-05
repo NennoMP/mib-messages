@@ -78,27 +78,27 @@ def create_app():
         db.create_all()
 
         # TEST -----------------------------------
-        from mib.models import Message
-        from datetime import datetime
-        example = Message()
-        example.sender_id = 1
-        example.recipient_id = 2
-        example.text = 'hello by 1'
-        now = datetime.now().replace(microsecond=0)
-        example.delivery_date = now
-        example.is_draft = False
-        example.is_delivered = True
-        db.session.add(example)
-        example = Message()
-        example.sender_id = 2
-        example.recipient_id = 1
-        example.text = 'hello by 2'
-        now = datetime.now().replace(microsecond=0)
-        example.delivery_date = now
-        example.is_draft = False
-        example.is_delivered = True
-        db.session.add(example)
-        db.session.commit()
+        # from mib.models import Message
+        # from datetime import datetime
+        # example = Message()
+        # example.sender_id = 1
+        # example.recipient_id = 2
+        # example.text = 'hello by 1'
+        # now = datetime.now().replace(microsecond=0)
+        # example.delivery_date = now
+        # example.is_draft = False
+        # example.is_delivered = True
+        # db.session.add(example)
+        # example = Message()
+        # example.sender_id = 2
+        # example.recipient_id = 1
+        # example.text = 'hello by 2'
+        # now = datetime.now().replace(microsecond=0)
+        # example.delivery_date = now
+        # example.is_draft = False
+        # example.is_delivered = True
+        # db.session.add(example)
+        # db.session.commit()
         # -----------------------------------
 
 
