@@ -134,8 +134,12 @@ def get_messages(user_id=None):
     # Retrieve draft messages of user <id>
     draft_messages = MessageManager.retrieve_by_type(user_id, 'draft')
 
+    # Retrieve scheduled messages of user <id>
+    scheduled_messages = MessageManager.retrieve_by_type(user_id, 'scheduled')
+
     return jsonify({
         'sent':     [message.serialize() for message in sent_messages],
         'received': [message.serialize() for message in received_messages],
-        'drafts':   [message.serialize() for message in draft_messages]
+        'drafts':   [message.serialize() for message in draft_messages],
+        'scheduled': [message.serialize() for message in scheduled_messages]
     }), 200

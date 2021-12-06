@@ -41,6 +41,13 @@ class MessageManager(object):
                 Message.sender_id == user_id,
                 Message.access.op('&')(Access.SENDER.value),
                 Message.is_draft
+            ), 
+
+            'scheduled': (
+                Message.sender_id == user_id,
+                Message.access.op('&')(Access.SENDER.value),
+                ~Message.is_draft,
+                ~Message.is_delivered
             )
         }
 
