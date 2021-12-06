@@ -49,6 +49,7 @@ class MessageManager(object):
 
     @staticmethod
     def create(**kwargs):
+        MessageManager.check_none(**kwargs)
         for bean in kwargs.values():
             db.session.add(bean)
         db.session.commit()

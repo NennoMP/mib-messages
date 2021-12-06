@@ -1,12 +1,24 @@
+from better_profanity import profanity
 from copy import copy
 from datetime import datetime
-from better_profanity import profanity
 from flask import request, jsonify
+from functools import wraps
 
 from mib.dao.message_manager import MessageManager
 from mib.rao.user_manager import UserManager
 from mib.models import Message
 from access import Access
+
+
+def check_none_args(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            MessageManager.check_none(**kwargs)
+        except ValueError:
+            return 'Missing user_id or message_id', 400
+        return func(*args, **kwargs)
+    return wrapper
 
 
 def filter_language(message):
@@ -23,14 +35,12 @@ def create_message():
     return 'Message created', 201
 
 
+@check_none_args
 def get_message_by_id(user_id=None, message_id=None):
     '''Allows the user to read a specific message by id.
 
        GET: display the content of a specific message by id (censored if language_filter is ON)
     '''
-    if user_id is None or message_id is None:
-        return 'Missing user_id or message_id', 400
-
     try:
         message = MessageManager.retrieve_by_id(message_id)
     except KeyError:
@@ -39,7 +49,7 @@ def get_message_by_id(user_id=None, message_id=None):
     if not Access.is_sender_or_recipient(message, user_id):
         return 'Message not found', 404
 
-    if message.get_recipient() == user_id and not message.is_draft and not message.is_read and message.is_delivered:
+    if message.recipient_id == user_id and not message.is_draft and not message.is_read and message.is_delivered:
         #notify.delay(message.get_sender(), 'Your message has been read!')  # TODO
         message.is_read = True
         MessageManager.update()
@@ -48,19 +58,17 @@ def get_message_by_id(user_id=None, message_id=None):
     if user_id == message.recipient_id:
         try:
             current_user = UserManager.get_profile_by_id(user_id)
+            if current_user['has_language_filter']:
+                filter_language(message_aux)
         except RuntimeError:
             message_aux.text = ''
-        if current_user['has_language_filter']:
-            filter_language(message_aux)
 
     return jsonify(message_aux.serialize()), 200
 
 
+@check_none_args
 def update_message(user_id=None, message_id=None):
     ''''Allows to update a message.'''
-    if user_id is None or message_id is None:
-        return 'Missing user_id or message_id', 400
-
     try:
         message = MessageManager.retrieve_by_id(message_id)
     except KeyError:
@@ -74,18 +82,17 @@ def update_message(user_id=None, message_id=None):
     message.text = json_message['text']
     message.is_draft = json_message['is_draft']
     message.recipient_id = json_message['recipient_id']
+    if 'is_delivered' in json_message:
+        message.is_delivered = json_message['is_delivered']
     if 'delivery_date' in json_message:
         message.delivery_date = datetime.strptime(json_message['delivery_date'], '%Y-%m-%d %H:%M:%S')
     MessageManager.update()
     return 'Message updated', 200
 
 
-# TODO: decorator for sanity and access checks.
+@check_none_args
 def delete_message(user_id=None, message_id=None):
     '''Allows the user to delete a specific message by id.'''
-    if user_id is None or message_id is None:
-        return 'TODO', 404
-
     try:
         message = MessageManager.retrieve_by_id(message_id)
     except KeyError:
@@ -114,10 +121,9 @@ def delete_message(user_id=None, message_id=None):
     return jsonify({'msg': 'Message deleted successfully'}), 200
 
 
+@check_none_args
 def get_messages(user_id=None):
-    '''Retrieves sent, received and draft messages of a user by their id'''
-    if user_id is None:
-        return 'User not found', 404
+    '''Retrieves sent, received and draft messages of a user by their id'''    
     
     # Retrieve sent messages of user <id>
     sent_messages = MessageManager.retrieve_by_type(user_id, 'sent')

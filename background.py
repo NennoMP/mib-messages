@@ -87,7 +87,7 @@ def send_messages():
             message.is_delivered = True
             db.session.commit()
             # Send notification to the recipient.
-            notify.delay(message.get_recipient(), 'You received a new message!')
+            notify.delay(message.recipient_id, 'You received a new message!')
 
     return 'Delivered'
 

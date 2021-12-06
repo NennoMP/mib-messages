@@ -28,20 +28,5 @@ class Message(db.Model):
     def __init__(self, *args, **kw):
         super(Message, self).__init__(*args, **kw)
 
-    def get_id(self):
-        return self.id
-
-    def get_sender(self):
-        return self.sender_id
-
-    def get_recipient(self):
-        return self.recipient_id
-
-    def get_text(self):
-        return self.text
-
-    def get_delivery_date(self):
-        return self.delivery_date
-
     def serialize(self):
         return dict([(k, self.__getattribute__(k)) for k in self.SERIALIZE_LIST])

@@ -27,4 +27,5 @@ class UserManager:
                     'Server has sent an unrecognized status code %s' % response.status_code)
 
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            return abort(500)
+            raise RuntimeError(
+                    f'Error connecting to {cls.USERS_ENDPOINT}')

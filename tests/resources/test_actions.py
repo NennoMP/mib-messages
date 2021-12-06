@@ -19,12 +19,16 @@ class TestActions(ViewTest):
         super(TestActions, cls).setUpClass()
 
     def test_message(self):
-
         # Create random message
         message = TestMessage.generate_random_message()
-        
-        # Get not existing message
+
+        # Get existing message of another user
         url = f"/message/{message.sender_id}/1"
+        response = self.client.get(url)
+        assert response.status_code == 404
+
+        # Get not existing message
+        url = f"/message/{message.sender_id}/100"
         response = self.client.get(url)
         assert response.status_code == 404
 
@@ -41,36 +45,64 @@ class TestActions(ViewTest):
         assert response.status_code == 201
 
         # Get existing message
-        response = self.client.get(f'/message/{message.sender_id}/1')
+        response = self.client.get(f'/message/{message.sender_id}/13')
         assert response.status_code == 200
 
-        # #Update not existing message
-        # message.text='new'
-        # response = self.client.put(f"/message/{message.sender_id}/100", data={'message':message})
-        # assert response.status_code == 404
+        # Update not existing message (deliver)
+        message.is_delivered = True
+        message.is_draft = False
+        message.text = 'new'
+        serialized_message = message.serialize()
+        old_date = serialized_message['delivery_date']
+        serialized_message['delivery_date'] = datetime.strftime(old_date, '%Y-%m-%d %H:%M:%S')
+        response = self.client.put(
+            f"/message/{message.sender_id}/100",
+            data=json.dumps({'message': serialized_message}),
+            content_type='application/json'
+        )
+        assert response.status_code == 404
 
-        # #Update existing message
-        # message.text='new'
-        # url = f"/message/{message.sender_id}/1"
-        # response = self.client.put(url, data={'message':message})
-        # assert response.status_code == 200
+        # Update existing message with no rights
+        response = self.client.put(
+            f"/message/0/13",
+            data=json.dumps({'message': serialized_message}),
+            content_type='application/json'
+        )
+        assert response.status_code == 404
 
-        # #Verifing update existing message
-        # url = f"/message/{message.sender_id}/1"
-        # response = self.client.get(url)
-        # assert response.get_json()['text'] == message.text
+        # Update existing message
+        response = self.client.put(
+            f"/message/{message.sender_id}/13",
+            data=json.dumps({'message': serialized_message}),
+            content_type='application/json'
+        )
+        assert response.status_code == 200
 
-        # #Delete not existing message
-        # url = f"/message/{message.sender_id}/100"
-        # response = self.client.delete(url)
-        # assert response.status_code == 404
+        # Read new message
+        response = self.client.get(f'/message/{message.recipient_id}/13')
+        assert response.status_code == 200
 
-        # #Delete existing message
-        # url = f"/message/{message.sender_id}/1"
-        # response = self.client.get(url)
-        # assert response.status_code == 200
+        # Verifing update existing message
+        response = self.client.get(f"/message/{message.sender_id}/13")
+        assert response.get_json()['text'] == serialized_message['text']
 
-        # #Delete again message
-        # url = f"/message/{message.sender_id}/1"
-        # response = self.client.get(url)
-        # assert response.status_code == 404
+        # Delete not existing message
+        response = self.client.delete(f"/message/{message.sender_id}/100")
+        assert response.status_code == 404
+
+        # Delete existing message (sender)
+        response = self.client.delete(f"/message/{message.sender_id}/13")
+        assert response.status_code == 200
+
+        # Delete existing message (recipient)
+        response = self.client.delete(f"/message/{message.recipient_id}/13")
+        assert response.status_code == 200
+
+        # Delete again message
+        response = self.client.delete(f"/message/{message.sender_id}/13")
+        assert response.status_code == 404
+
+        # Get mailbox
+        response = self.client.get(f"/message/{message.sender_id}/messages")
+        # assert
+        assert response.status_code == 200
