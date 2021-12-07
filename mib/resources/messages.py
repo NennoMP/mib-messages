@@ -8,6 +8,7 @@ from mib.dao.message_manager import MessageManager
 from mib.rao.user_manager import UserManager
 from mib.models import Message
 from access import Access
+from background import notify
 
 
 def check_none_args(func):
@@ -50,7 +51,7 @@ def get_message_by_id(user_id=None, message_id=None):
         return 'Message not found', 404
 
     if message.recipient_id == user_id and not message.is_draft and not message.is_read and message.is_delivered:
-        #notify.delay(message.get_sender(), 'Your message has been read!')  # TODO
+        notify.delay(message.sender_id, 'Your message has been read!') 
         message.is_read = True
         MessageManager.update()
 
@@ -102,11 +103,7 @@ def delete_message(user_id=None, message_id=None):
         return 'Message not found', 404
 
     # Delete scheduled message using bonus
-
-    # TODO: check user bonus
-    if not message.is_draft and not message.is_delivered: # and current_user.bonus > 0:
-        #user = db.session.query(User).filter(User.id==user_id).first()
-        #user.bonus -= 1
+    if not message.is_draft and not message.is_delivered:
         message.access -= Access.SENDER.value
         MessageManager.update()
         return jsonify({'msg': 'Message deleted successfully'}), 200
