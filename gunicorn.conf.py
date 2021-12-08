@@ -14,7 +14,7 @@ backlog = 2048
 # Tuning the workers as specified in this article
 # https://pythonspeed.com/articles/gunicorn-in-docker/
 #
-workers = 2
+workers = 1
 threads = 4
 worker_tmp_dir = '/dev/shm'
 worker_class = 'gthread'
