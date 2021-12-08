@@ -24,13 +24,13 @@ def check_none_args(func):
 
 def filter_language(message):
     '''Utility function for censoring bad language in received messages.'''
-    message.text = profanity.censor(message.text)  # Censorship.
+    message.text = profanity.censor(message.text)
 
 
 def create_message():
     ''''Allows to create a new message.'''
     json_message = request.get_json()['message']
-    json_message['delivery_date'] = datetime.strptime(json_message['delivery_date'],'%Y-%m-%d %H:%M:%S')
+    json_message['delivery_date'] = datetime.strptime(json_message['delivery_date'], '%Y-%m-%d %H:%M:%S')
     message = Message(**json_message)
     MessageManager.create(message=message)
     return 'Message created', 201
