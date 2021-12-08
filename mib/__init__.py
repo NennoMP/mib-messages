@@ -88,6 +88,7 @@ def create_app():
         # example.delivery_date = now
         # example.is_draft = False
         # example.is_delivered = True
+        # example.is_read = True
         # db.session.add(example)
         # example = Message()
         # example.sender_id = 2
@@ -97,6 +98,7 @@ def create_app():
         # example.delivery_date = now
         # example.is_draft = False
         # example.is_delivered = True
+        # example.is_read = True
         # db.session.add(example)
         # db.session.commit()
         # -----------------------------------
