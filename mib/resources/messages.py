@@ -1,3 +1,4 @@
+import os
 from better_profanity import profanity
 from copy import copy
 from datetime import datetime
@@ -9,6 +10,9 @@ from mib.rao.user_manager import UserManager
 from mib.models import Message
 from access import Access
 from background import notify
+
+
+env = os.getenv('FLASK_ENV', 'None')
 
 
 def check_none_args(func):
@@ -51,7 +55,8 @@ def get_message_by_id(user_id=None, message_id=None):
         return 'Message not found', 404
 
     if message.recipient_id == user_id and not message.is_draft and not message.is_read and message.is_delivered:
-        notify.delay(message.sender_id, 'Your message has been read!') 
+        if env != 'testing' and env != 'development':
+            notify.delay(message.sender_id, 'Your message has been read!') 
         message.is_read = True
         MessageManager.update()
 

@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime
-#from unittest.case import FunctionTestCase
 
 from faker import Faker
 
@@ -33,8 +32,7 @@ class TestMessage(ModelTest):
         sender_id = TestMessage.faker.random_number()
         recipient_id = TestMessage.faker.random_number()
         text = TestMessage.faker.text()
-        dt = datetime.now().replace(microsecond=0)
-        delivery_date = datetime.now().replace(microsecond=0) # datetime.strftime(dt, '%Y-%m-%d %H:%M:%S')  #TestMessage.faker.date_time()
+        delivery_date = datetime.now().replace(microsecond=0)
         # Booleans
         is_draft = True
         is_delivered = False

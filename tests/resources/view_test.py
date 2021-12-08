@@ -1,5 +1,6 @@
 import unittest
 
+
 class ViewTest(unittest.TestCase):
     """
     This class should be implemented by

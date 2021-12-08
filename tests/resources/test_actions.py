@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Sequence
 from flask import json
 
 from .view_test import ViewTest
@@ -19,6 +20,8 @@ class TestActions(ViewTest):
         super(TestActions, cls).setUpClass()
 
     def test_message(self):
+        sequence_number = 11
+
         # Create random message
         message = TestMessage.generate_random_message()
 
@@ -45,7 +48,7 @@ class TestActions(ViewTest):
         assert response.status_code == 201
 
         # Get existing message
-        response = self.client.get(f'/message/{message.sender_id}/13')
+        response = self.client.get(f'/message/{message.sender_id}/{sequence_number}')
         assert response.status_code == 200
 
         # Update not existing message (deliver)
@@ -64,7 +67,7 @@ class TestActions(ViewTest):
 
         # Update existing message with no rights
         response = self.client.put(
-            f"/message/0/13",
+            f"/message/0/{sequence_number}",
             data=json.dumps({'message': serialized_message}),
             content_type='application/json'
         )
@@ -72,18 +75,18 @@ class TestActions(ViewTest):
 
         # Update existing message
         response = self.client.put(
-            f"/message/{message.sender_id}/13",
+            f"/message/{message.sender_id}/{sequence_number}",
             data=json.dumps({'message': serialized_message}),
             content_type='application/json'
         )
         assert response.status_code == 200
 
         # Read new message
-        response = self.client.get(f'/message/{message.recipient_id}/13')
+        response = self.client.get(f'/message/{message.recipient_id}/{sequence_number}')
         assert response.status_code == 200
 
         # Verifing update existing message
-        response = self.client.get(f"/message/{message.sender_id}/13")
+        response = self.client.get(f"/message/{message.sender_id}/{sequence_number}")
         assert response.get_json()['text'] == serialized_message['text']
 
         # Delete not existing message
@@ -91,15 +94,15 @@ class TestActions(ViewTest):
         assert response.status_code == 404
 
         # Delete existing message (sender)
-        response = self.client.delete(f"/message/{message.sender_id}/13")
+        response = self.client.delete(f"/message/{message.sender_id}/{sequence_number}")
         assert response.status_code == 200
 
         # Delete existing message (recipient)
-        response = self.client.delete(f"/message/{message.recipient_id}/13")
+        response = self.client.delete(f"/message/{message.recipient_id}/{sequence_number}")
         assert response.status_code == 200
 
         # Delete again message
-        response = self.client.delete(f"/message/{message.sender_id}/13")
+        response = self.client.delete(f"/message/{message.sender_id}/{sequence_number}")
         assert response.status_code == 404
 
         # Get mailbox
