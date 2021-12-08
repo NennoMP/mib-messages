@@ -1,0 +1,16 @@
+#
+# Flask Configuration
+#
+#------------------------
+FLASK_ENV=production
+APP_SECRET_KET=SNRMPRg3iXN3Ce6ggaJRsTeT
+#
+# Postgres configuration
+#
+#------------------------
+#
+# POSTGRES_HOST=
+#
+POSTGRES_PASSWORD=abcd
+POSTGRES_USER=mib_messages_ms
+POSTGRES_DB=mib_messages_ms
