@@ -88,9 +88,10 @@ If you are developing application and you want to have the debug tools, you can 
 
 ### Run tests
 
-To run all the tests, execute the following command:
+In order to test the application we first need to set the enviroment and then to run the tests. Execute the following commands:
 
-`python -m pytest`
+- `export FLASK_ENV=testing`
+- `python -m pytest`
 
 You can also specify one or more specific test files, in order to run only those specific tests.
 In case you also want to see the overall coverage of the tests, execute the following command:
