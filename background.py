@@ -1,28 +1,16 @@
-# from mib import create_app, create_celery
-
-# flask_app = create_app()
-# app = create_celery(flask_app)
-
-# try:
-#     import mib.tasks
-# except ImportError:
-#     raise RuntimeError('Cannot import celery tasks')
-
-
 from datetime import datetime
-import random
-import os, smtplib, ssl
+import os, smtplib, ssl, time
 import config
 
 from celery import Celery
-from flask_sqlalchemy import SQLAlchemy
-import sqlalchemy
-
 
 from access import Access
-#from .utils import send_email
 
-os.environ['FLASK_ENV']='production'
+
+import os
+os.environ['FLASK_ENV']='development'
+os.environ['TZ'] = 'Europe/Rome'
+time.tzset()
 
 
 BACKEND = BROKER = 'redis://localhost:6381/0'
@@ -75,8 +63,8 @@ def send_messages():
     with app.app_context():
         from mib import db
         from mib.models.message import Message
+        print(datetime.now())
         messages = db.session.query(Message).filter(
-            Message.recipient_id == 1,
             ~Message.is_delivered,
             ~Message.is_draft,
             Message.delivery_date <= datetime.now(),
@@ -88,8 +76,9 @@ def send_messages():
             db.session.commit()
             # Send notification to the recipient.
             notify.delay(message.recipient_id, 'You received a new message!')
+            return 'Delivered'
 
-    return 'Delivered'
+    #return 'Delivered'
 
 
 @celery.task
@@ -112,28 +101,6 @@ def notify(user_id, message):
     return 'Email sent'
 
 
-# @celery.task
-# def lottery():
-#     '''Increases the bonus of a random user
-#        and sends a notification for that.
-#     '''
-#     app = lazy_init()
-#     with app.app_context():
-#         n_users = int(User.query.count())
-#         random_n = random.randint(0, n_users+1)
-#         random_user = User.query.filter_by(id=random_n).first()
-#         if random_user is None or not random_user.is_active:
-#             lottery.delay()
-#             return 'Redoing lottery'
-
-#         random_user.bonus += 1
-#         db.session.commit()
-#         message = 'Congratulations, you won a bonus deletion!'
-#         notify.delay(random_user.id, message)
-
-#     return 'Lottery done'
-
-
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     '''Registers the periodic tasks.'''
@@ -141,8 +108,7 @@ def setup_periodic_tasks(sender, **kwargs):
         'minute': 1,
         'month': 60*60*24*30
     }
-    # Send pending messages every 5 minutes.
-    sender.add_periodic_task(5 * seconds_in_a['minute'], send_messages.s(), name='send_messages')
-    # Lottery every month.
-    #sender.add_periodic_task(seconds_in_a['month'], lottery.s(), name='lottery')
 
+    # Send pending messages every 5 minutes.
+    # sender.add_periodic_task(5 * seconds_in_a['minute'], send_messages.s(), name='send_messages')
+    sender.add_periodic_task(5, send_messages.s(), name='send_messages')

@@ -55,7 +55,7 @@ def get_message_by_id(user_id=None, message_id=None):
         return 'Message not found', 404
 
     if message.recipient_id == user_id and not message.is_draft and not message.is_read and message.is_delivered:
-        if env != 'testing' and env != 'development':
+        if env != 'testing':
             notify.delay(message.sender_id, 'Your message has been read!') 
         message.is_read = True
         MessageManager.update()
