@@ -22,12 +22,12 @@ import sqlalchemy
 from access import Access
 #from .utils import send_email
 
-os.environ['FLASK_ENV']='development'
+os.environ['FLASK_ENV']='production'
 
 
-BACKEND = BROKER = 'redis://localhost:6379/0'
+BACKEND = BROKER = 'redis://localhost:6381/0'
 
-celery = Celery(__name__, broker=BROKER, backend=BACKEND)
+celery = Celery(__name__, broker=BROKER)
 
 _APP = None
 
@@ -77,9 +77,9 @@ def send_messages():
         from mib.models.message import Message
         messages = db.session.query(Message).filter(
             Message.recipient_id == 1,
-            #~Message.is_delivered,
+            ~Message.is_delivered,
             ~Message.is_draft,
-            #Message.delivery_date <= datetime.now(),
+            Message.delivery_date <= datetime.now(),
             Message.access.op('&')(Access.SENDER.value)  # Message not deleted with the bonus.
         )
 
