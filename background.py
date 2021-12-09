@@ -110,5 +110,4 @@ def setup_periodic_tasks(sender, **kwargs):
     }
 
     # Send pending messages every 5 minutes.
-    # sender.add_periodic_task(5 * seconds_in_a['minute'], send_messages.s(), name='send_messages')
-    sender.add_periodic_task(5, send_messages.s(), name='send_messages')
+    sender.add_periodic_task(5 * seconds_in_a['minute'], send_messages.s(), name='send_messages')
