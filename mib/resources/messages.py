@@ -69,7 +69,7 @@ def get_message_by_id(user_id=None, message_id=None):
             if current_user['has_language_filter']:
                 filter_language(message_aux)
         except RuntimeError:
-            message_aux.text = ''
+            message_aux.text = message_aux.text
 
     return jsonify(message_aux.serialize()), 200
 
