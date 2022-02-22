@@ -3,13 +3,8 @@
 [![CircleCI](https://circleci.com/gh/NennoMP/mib-messages.svg?style=svg)](https://app.circleci.com/pipelines/github/NennoMP/mib-messages)
 [![codecov](https://codecov.io/gh/NennoMP/mib-messages/branch/main/graph/badge.svg?token=7GC2OZW43F)](https://codecov.io/gh/NennoMP/mib-messages)
 
-This is the source code of Message in a Bottle application, self project of *Advanced Software Engineering* course,
+This is the source code of My Message in a Bottle Messages microservice, project of **Advanced Software Engineering** course of the MSc in Computer Science,
 University of Pisa.
-
-## Team info
-
-- The *squad id* is **5**
-- The *team leader* is *Laura Norato*
 
 #### Members
 
@@ -21,57 +16,13 @@ Mark with *bold* the person(s) that has developed this microservice.
 |*Emanuele Albertosi*|20783727@studenti.unipi.it     |
 |*Michele Zoncheddu* |m.zoncheddu@studenti.unipi.it  |
 |*Alessio Russo*     |a.russo65@studenti.unipi.it    |
-|*Matteo Pinna*     |m.pinna10@studenti.unipi.it    |
+|*Matteo Pinna*      |m.pinna10@studenti.unipi.it    |
 
+
+## Overview
+This microservice implements the Messages logic, messages-related backend features, and maintains the corresponding database. Its services are available to the **mib-api-gateway** through APIs, you can test the APIs by running the microservice and then by accessing the Swagger interface with */ui*. In addition, you can find the APIs specifications in the corresponding settings file *mib/specifications/<file-name>.yml*.
 
 ## Instructions
-
-### Initialization
-
-To setup the project initially you have to run these commands
-inside the project's root.
-
-`virtualenv -p python3 venv`
-
-`source venv/bin/activate`
-
-`pip install -r requirements.dev.txt`
-
-### Run the project
-
-To run the project you have to setup the flask environment,
-you can do it by executing the following commands:
-
-```shell script
-cp env_file_example env_file
-cp env_file_example .env
-export FLASK_ENV=development
-flask run
-```
-
-
-#### Flask routes
-
-To show the primary routes of flask application you can issue the following command:
-
-`flask routes`
-
-The default swagger-ui interface is available on */ui*
-
-#### Executing migrations
-
-If you change something in the models package or you create a new model,
-you have to run these commands to apply the modifications:
-
-`flask db migrate -m '<message>'`
-
-and
-
-`flask db upgrade`
-
-
-#### Application Environments
-
 The available environments are:
 
 - debug
@@ -79,38 +30,39 @@ The available environments are:
 - testing
 - production
 
-If you want to run the application with development environment
-you can run the `run.sh` script.
+If you want to run the appliction with development environment, or you are developing the application and you want to have the debug tools, you can start the application locally (without `docker-compose`) by executing `bash run.sh`.
 
 **Note:** if you use `docker-compose up` you are going to startup a production ready microservice, hence postgres will be used as default database and gunicorn will serve your application.
 
-If you are developing application and you want to have the debug tools, you can start application locally (without `docker-compose`) by executing `bash run.sh`.
 
-### Run tests
+### Run the project
+You can run the entire application by following the instructions on the main repository mib-main. However, if you would like to separately run the User microservice take a look at the steps below.
 
-In order to test the application we first need to set the enviroment and then to run the tests. Execute the following commands:
+#### Initialization
+First, you need to setup create a virtual environment and to install all requirements. Run these commands inside **mib-messages** root:
 
-- `export FLASK_ENV=testing`
-- `python -m pytest`
+1. Create a virtual environment with `virtualenv venv`.
+3. Activate it with `source venv/bin/activate` or `source venv/scripts/activate`.
+4. Install all requirements needed with `pip install -r requirements.dev.txt`.
 
-You can also specify one or more specific test files, in order to run only those specific tests.
-In case you also want to see the overall coverage of the tests, execute the following command:
+#### Run
+You can now run the project running the following commands:
+
+1. Run the microservice with `bash run.sh` (environment is automatically set to development).
+
+#### Testing
+In order to execute the tests you need, if you haven't already, to install the requirements by following the steps mentioned above. When you're done, you can run the tests:
+
+1. Set Flask environment to testing with `export FLASK_ENV=testing`
+2. Run the tests with `pytest`
+
+The tests are set to file when the coverage is below 90%.
+
+You can also specify one or more specific test files, in order to run only those specific tests. In case you also want to see the overall coverage of the tests, execute the following command:
 
 `python -m pytest --cov=mib`
 
 In order to know what are the lines of codes which are not covered by the tests, execute the command:
 
 `python -m pytest --cov-report term-missing`
-
-## Conventions
-
-- Name of files must be snake_cased
-- Name of methods, properties, variables must be snake_cased
-- Name of classes must be PascalCased 
-- Name of constants must be UPPERCASE 
-- The class name of managers must be in the format `<BeanName>Manager`
-
-### Future implementations
-
----
 
